@@ -37,6 +37,7 @@ En el servicio **kefir-system** (no en la base de datos), pestaña **Variables**
 | `SESSION_DRIVER` | `database` |
 | `CACHE_STORE` | `database` |
 | `LOG_CHANNEL` | `stderr` |
+| `SESSION_SECURE_COOKIE` | `true` |
 
 **Generar APP_KEY** (en tu PC, dentro del proyecto):
 
@@ -99,3 +100,14 @@ git push origin main
 | Render (starter) | ~7–14 USD/mes |
 
 Para una demo corta, Railway suele incluir crédito inicial gratis.
+
+---
+
+## Error 500 en producción
+
+Si ves **Server Error 500**:
+
+1. Verifica `APP_KEY`, `DATABASE_URL` y `APP_URL` en Railway.
+2. En **Deployments → View logs**, busca el error exacto de PHP/Laravel.
+3. Asegúrate de usar el último deploy (sin `route:cache`, incompatible con Filament).
+4. Redeploy después de un push nuevo a `main`.
