@@ -1,11 +1,23 @@
 #!/bin/sh
 set -e
 
-if [ -n "$DATABASE_URL" ] && [ -z "$DB_URL" ]; then
+# Railway provee DATABASE_URL o variables PG*
+if [ -n "$DATABASE_URL" ]; then
     export DB_URL="$DATABASE_URL"
+elif [ -n "$PGHOST" ]; then
+    export DB_HOST="$PGHOST"
+    export DB_PORT="${PGPORT:-5432}"
+    export DB_DATABASE="$PGDATABASE"
+    export DB_USERNAME="$PGUSER"
+    export DB_PASSWORD="$PGPASSWORD"
 fi
 
-# Railway inyecta el dominio publico automaticamente.
+if [ -z "$DB_URL" ] && [ -z "$PGHOST" ]; then
+    echo "ERROR: PostgreSQL no configurado."
+    echo "En Railway → servicio web → Variables → agrega DATABASE_URL referenciando PostgreSQL."
+    exit 1
+fi
+
 if [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
     export APP_URL="https://${RAILWAY_PUBLIC_DOMAIN}"
 fi
@@ -26,6 +38,7 @@ fi
 
 echo "APP_URL=${APP_URL:-no-configurada}"
 echo "DB_CONNECTION=${DB_CONNECTION}"
+echo "DATABASE_URL configurada: $([ -n "$DB_URL" ] || [ -n "$PGHOST" ] && echo si || echo no)"
 
 mkdir -p storage/framework/sessions storage/framework/cache/data storage/framework/views storage/logs bootstrap/cache
 chmod -R 777 storage bootstrap/cache
@@ -54,7 +67,7 @@ php artisan package:discover --ansi
 
 echo "Verificando conexion a base de datos..."
 php artisan db:show --no-interaction || {
-    echo "ERROR: no hay conexion a PostgreSQL. Revisa DATABASE_URL."
+    echo "ERROR: no hay conexion a PostgreSQL. Revisa DATABASE_URL en Railway."
     exit 1
 }
 

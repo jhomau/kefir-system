@@ -49,7 +49,9 @@ php artisan key:generate --show
 
 Copia el valor `base64:...` y pégalo en `APP_KEY`.
 
-> Para `DATABASE_URL`: usa el botón **Add Reference** y selecciona la variable `DATABASE_URL` del servicio PostgreSQL.
+> Para `DATABASE_URL`: usa el botón **Add Reference** → selecciona el servicio **PostgreSQL** → variable `DATABASE_URL`.
+
+> **No agregues** `DB_HOST=127.0.0.1` ni `DB_PORT=5432` manualmente — eso causa el error "Connection refused".
 
 ### 5. Dominio público
 
@@ -102,6 +104,18 @@ git push origin main
 | Render (starter) | ~7–14 USD/mes |
 
 Para una demo corta, Railway suele incluir crédito inicial gratis.
+
+---
+
+## Error: Connection refused 127.0.0.1:5432
+
+Significa que **PostgreSQL no está conectado** al servicio web.
+
+1. En Railway, verifica que exista un servicio **PostgreSQL** en el mismo proyecto.
+2. En el servicio **web** (kefir-system) → **Variables**:
+   - Clic **Add Reference** → PostgreSQL → `DATABASE_URL`
+3. **Elimina** variables manuales: `DB_HOST`, `DB_PORT`, `DB_DATABASE` si las creaste.
+4. Redeploy.
 
 ---
 
