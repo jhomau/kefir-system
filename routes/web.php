@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Throwable;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,7 +15,7 @@ Route::get('/health', function () {
             'status' => 'ok',
             'database' => 'connected',
         ]);
-    } catch (Throwable $exception) {
+    } catch (\Throwable $exception) {
         return response()->json([
             'status' => 'error',
             'database' => 'failed',
