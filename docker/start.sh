@@ -1,22 +1,35 @@
 #!/bin/sh
 set -e
 
-# Railway provee DATABASE_URL o variables PG*
-if [ -n "$DATABASE_URL" ]; then
-    export DB_URL="$DATABASE_URL"
-elif [ -n "$PGHOST" ]; then
-    export DB_HOST="$PGHOST"
-    export DB_PORT="${PGPORT:-5432}"
-    export DB_DATABASE="$PGDATABASE"
-    export DB_USERNAME="$PGUSER"
-    export DB_PASSWORD="$PGPASSWORD"
-fi
+resolve_database_config() {
+    if [ -n "$DATABASE_URL" ]; then
+        export DB_URL="$DATABASE_URL"
+        unset DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD
+        return 0
+    fi
 
-if [ -z "$DB_URL" ] && [ -z "$PGHOST" ]; then
+    if [ -n "$PGHOST" ] && [ "$PGHOST" != "127.0.0.1" ] && [ "$PGHOST" != "localhost" ]; then
+        export DB_HOST="$PGHOST"
+        export DB_PORT="${PGPORT:-5432}"
+        export DB_DATABASE="$PGDATABASE"
+        export DB_USERNAME="$PGUSER"
+        export DB_PASSWORD="$PGPASSWORD"
+        unset DB_URL
+        return 0
+    fi
+
+    if [ -n "$DB_HOST" ] && [ "$DB_HOST" != "127.0.0.1" ] && [ "$DB_HOST" != "localhost" ]; then
+        return 0
+    fi
+
     echo "ERROR: PostgreSQL no configurado."
-    echo "En Railway → servicio web → Variables → agrega DATABASE_URL referenciando PostgreSQL."
+    echo "En Railway → servicio web → Variables:"
+    echo "  1. Add Reference → PostgreSQL → DATABASE_URL"
+    echo "  2. Elimina DB_HOST=127.0.0.1 si existe"
     exit 1
-fi
+}
+
+resolve_database_config
 
 if [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
     export APP_URL="https://${RAILWAY_PUBLIC_DOMAIN}"
@@ -38,6 +51,7 @@ fi
 
 echo "APP_URL=${APP_URL:-no-configurada}"
 echo "DB_CONNECTION=${DB_CONNECTION}"
+echo "DB_HOST=${DB_HOST:-desde DATABASE_URL}"
 echo "DATABASE_URL configurada: $([ -n "$DB_URL" ] || [ -n "$PGHOST" ] && echo si || echo no)"
 
 mkdir -p storage/framework/sessions storage/framework/cache/data storage/framework/views storage/logs bootstrap/cache
