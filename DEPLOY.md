@@ -34,8 +34,9 @@ En el servicio **kefir-system** (no en la base de datos), pestaña **Variables**
 | `APP_URL` | `https://TU-DOMINIO.up.railway.app` |
 | `DB_CONNECTION` | `pgsql` |
 | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` |
-| `SESSION_DRIVER` | `database` |
-| `CACHE_STORE` | `database` |
+| `DB_SSLMODE` | `require` |
+| `SESSION_DRIVER` | `file` |
+| `CACHE_STORE` | `file` |
 | `LOG_CHANNEL` | `stderr` |
 | `SESSION_SECURE_COOKIE` | `true` |
 
@@ -107,7 +108,8 @@ Para una demo corta, Railway suele incluir crédito inicial gratis.
 
 Si ves **Server Error 500**:
 
-1. Verifica `APP_KEY`, `DATABASE_URL` y `APP_URL` en Railway.
-2. En **Deployments → View logs**, busca el error exacto de PHP/Laravel.
-3. Asegúrate de usar el último deploy (sin `route:cache`, incompatible con Filament).
-4. Redeploy después de un push nuevo a `main`.
+1. Abre `https://TU-URL.up.railway.app/health` — si falla, el problema es la **base de datos**.
+2. Verifica en Railway: `APP_KEY`, `DATABASE_URL`, `APP_URL`, `DB_SSLMODE=require`.
+3. Cambia temporalmente `APP_DEBUG=true`, redeploy, mira el error en pantalla y vuelve a `false`.
+4. En **Deployments → View logs**, busca líneas rojas de PHP/Laravel.
+5. Asegúrate de usar el último deploy en `main`.

@@ -9,6 +9,13 @@ if [ -z "$DB_CONNECTION" ]; then
     export DB_CONNECTION=pgsql
 fi
 
+export DB_SSLMODE="${DB_SSLMODE:-require}"
+export SESSION_DRIVER="${SESSION_DRIVER:-file}"
+export CACHE_STORE="${CACHE_STORE:-file}"
+export QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
+export LOG_CHANNEL="${LOG_CHANNEL:-stderr}"
+export LOG_LEVEL="${LOG_LEVEL:-error}"
+
 if [ -z "$APP_KEY" ]; then
     echo "ERROR: APP_KEY no está configurada. Genera una con: php artisan key:generate --show"
     exit 1
@@ -36,8 +43,11 @@ php artisan db:seed --force --no-interaction || true
 php artisan permission:cache-reset --no-interaction 2>/dev/null || true
 php artisan package:discover --ansi
 
-# Filament/Livewire no funcionan bien con route:cache ni view:cache.
-php artisan config:cache
+echo "Verificando conexión a base de datos..."
+php artisan db:show --no-interaction || {
+    echo "ERROR: no hay conexión a PostgreSQL. Revisa DATABASE_URL y DB_SSLMODE."
+    exit 1
+}
 
 echo "Iniciando servidor en puerto ${PORT:-8080}..."
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-8080}"

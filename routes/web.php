@@ -1,7 +1,26 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Throwable;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/health', function () {
+    try {
+        DB::connection()->getPdo();
+
+        return response()->json([
+            'status' => 'ok',
+            'database' => 'connected',
+        ]);
+    } catch (Throwable $exception) {
+        return response()->json([
+            'status' => 'error',
+            'database' => 'failed',
+            'message' => $exception->getMessage(),
+        ], 500);
+    }
 });
