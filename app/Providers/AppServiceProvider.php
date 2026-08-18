@@ -20,12 +20,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if ($this->app->environment('production')) {
-            URL::forceScheme('https');
-
-            if ($appUrl = config('app.url')) {
-                URL::forceRootUrl($appUrl);
-            }
+        if (! $this->app->environment('production')) {
+            return;
         }
+
+        $appUrl = config('app.url');
+
+        if (blank($appUrl) || str_contains($appUrl, 'localhost') || str_contains($appUrl, '127.0.0.1')) {
+            return;
+        }
+
+        URL::forceRootUrl(rtrim($appUrl, '/'));
+        URL::forceScheme('https');
     }
 }

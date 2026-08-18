@@ -5,21 +5,30 @@ if [ -n "$DATABASE_URL" ] && [ -z "$DB_URL" ]; then
     export DB_URL="$DATABASE_URL"
 fi
 
-if [ -z "$DB_CONNECTION" ]; then
-    export DB_CONNECTION=pgsql
+# Railway inyecta el dominio publico automaticamente.
+if [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
+    export APP_URL="https://${RAILWAY_PUBLIC_DOMAIN}"
 fi
 
-export DB_SSLMODE="${DB_SSLMODE:-require}"
-export SESSION_DRIVER="${SESSION_DRIVER:-file}"
-export CACHE_STORE="${CACHE_STORE:-file}"
-export QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
-export LOG_CHANNEL="${LOG_CHANNEL:-stderr}"
+export APP_ENV="${APP_ENV:-production}"
+export DB_CONNECTION="pgsql"
+export DB_SSLMODE="require"
+export SESSION_DRIVER="file"
+export CACHE_STORE="file"
+export QUEUE_CONNECTION="sync"
+export LOG_CHANNEL="stderr"
 export LOG_LEVEL="${LOG_LEVEL:-error}"
 
 if [ -z "$APP_KEY" ]; then
-    echo "ERROR: APP_KEY no está configurada. Genera una con: php artisan key:generate --show"
+    echo "ERROR: APP_KEY no esta configurada. Genera una con: php artisan key:generate --show"
     exit 1
 fi
+
+echo "APP_URL=${APP_URL:-no-configurada}"
+echo "DB_CONNECTION=${DB_CONNECTION}"
+
+mkdir -p storage/framework/sessions storage/framework/cache/data storage/framework/views storage/logs bootstrap/cache
+chmod -R 777 storage bootstrap/cache
 
 php artisan optimize:clear
 
@@ -43,9 +52,9 @@ php artisan db:seed --force --no-interaction || true
 php artisan permission:cache-reset --no-interaction 2>/dev/null || true
 php artisan package:discover --ansi
 
-echo "Verificando conexión a base de datos..."
+echo "Verificando conexion a base de datos..."
 php artisan db:show --no-interaction || {
-    echo "ERROR: no hay conexión a PostgreSQL. Revisa DATABASE_URL y DB_SSLMODE."
+    echo "ERROR: no hay conexion a PostgreSQL. Revisa DATABASE_URL."
     exit 1
 }
 

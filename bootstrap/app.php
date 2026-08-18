@@ -22,5 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
         );
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->reportable(function (\Throwable $exception): void {
+            error_log('[kefir-system] '.$exception->getMessage());
+            error_log($exception->getTraceAsString());
+        });
     })->create();

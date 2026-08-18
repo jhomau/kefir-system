@@ -31,14 +31,15 @@ En el servicio **kefir-system** (no en la base de datos), pestaña **Variables**
 | `APP_ENV` | `production` |
 | `APP_DEBUG` | `false` |
 | `APP_KEY` | *(genera abajo)* |
-| `APP_URL` | `https://TU-DOMINIO.up.railway.app` |
+| `APP_URL` | *(opcional: Railway la detecta sola con `RAILWAY_PUBLIC_DOMAIN`)* |
 | `DB_CONNECTION` | `pgsql` |
 | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` |
 | `DB_SSLMODE` | `require` |
 | `SESSION_DRIVER` | `file` |
 | `CACHE_STORE` | `file` |
 | `LOG_CHANNEL` | `stderr` |
-| `SESSION_SECURE_COOKIE` | `true` |
+
+> **Importante:** Si tenías `APP_URL=http://localhost`, eso causa error 500 en produccion. Borra esa variable o pon la URL real de Railway.
 
 **Generar APP_KEY** (en tu PC, dentro del proyecto):
 
