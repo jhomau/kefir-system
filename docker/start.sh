@@ -15,11 +15,21 @@ if [ -z "$APP_KEY" ]; then
 fi
 
 php artisan config:clear
-php artisan migrate --force --no-interaction
-php artisan db:seed --force --no-interaction
 
+echo "Esperando base de datos..."
+for i in 1 2 3 4 5 6 7 8 9 10; do
+    if php artisan migrate --force --no-interaction; then
+        break
+    fi
+    echo "Reintento $i/10..."
+    sleep 3
+done
+
+php artisan db:seed --force --no-interaction || true
+php artisan package:discover --ansi
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+echo "Iniciando servidor en puerto ${PORT:-8080}..."
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-8080}"
