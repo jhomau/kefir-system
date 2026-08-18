@@ -5,52 +5,69 @@ Sistema de información para control de inventarios, ventas y clientes — produ
 ## Stack
 
 - Laravel 11
+- Filament 3 (panel admin)
 - Spatie Laravel Permission (roles dinámicos)
-- MySQL / SQLite
-- Filament 3 (próximo paso)
+- SQLite (local) / PostgreSQL (producción)
 
-## Requisitos
-
-- PHP 8.2+
-- Composer
-- MySQL (XAMPP) o SQLite
-
-## Instalación
+## Instalación local
 
 ```bash
-# Usar PHP 8.2+ (no el de XAMPP 8.0)
 copy .env.example .env
 php artisan key:generate
-
-# MySQL en XAMPP (.env):
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=kefir_system
-# DB_USERNAME=root
-# DB_PASSWORD=
-
 php artisan migrate --seed
-php artisan serve
+serve-artisan.bat
 ```
 
-## Usuario admin inicial
+## Accesos
 
-| Campo | Valor |
-|-------|-------|
-| Correo | admin@kefir.local |
-| Contraseña | password |
+| Área | URL |
+|------|-----|
+| Admin | http://127.0.0.1:8000/admin |
+| Tienda web | http://127.0.0.1:8000/tienda |
 
-## Tablas creadas (17)
+**Admin:** `admin@kefir.local` / `password`
 
-**Seguridad:** usuarios, roles, permisos, rol_permisos, usuario_roles, usuario_permisos
+## Módulos implementados
 
-**Negocio:** clientes, productos, lotes_producto, movimientos_inventario, ventas, detalle_ventas, pagos
+### Fase 1 — Base
+- Usuarios, roles, permisos
+- Clientes y productos
 
-**Finanzas:** categorias_gasto, gastos, otros_ingresos
+### Fase 2 — Inventario
+- Lotes de producción (`InventarioService`)
+- Movimientos (producción, venta, ajuste, merma, devolución)
+- Stock por producto y alertas de vencimiento/stock bajo
 
-## Roles iniciales
+### Fase 3 — Ventas
+- Registro de ventas con detalle (`VentaService`)
+- Pagos parciales/totales
+- Anulación con devolución de stock (FIFO por lote)
 
-- **administrador** — todos los permisos
-- **vendedor** — clientes, ventas, pagos, inventario (lectura)
-- **cliente** — catálogo web y reservas (fase 3)
+### Fase 4 — Finanzas
+- Gastos, categorías, otros ingresos
+- Dashboard con estadísticas del mes
+- Página de reportes
+
+### Fase 5 — Tienda web
+- Catálogo móvil en `/tienda`
+- Carrito y pedidos web (`pedido_web` / canal `web`)
+
+## Flujo recomendado de prueba
+
+1. Crear productos (o usar demo seeder)
+2. **Inventario → Lotes** — registrar producción
+3. **Ventas → Ventas** — registrar venta y pagos
+4. **Finanzas** — registrar gastos y ver reportes
+5. Marcar producto como **vendible en tienda web** y probar `/tienda`
+
+## Roles
+
+| Rol | Acceso |
+|-----|--------|
+| administrador | Todo |
+| vendedor | Clientes, ventas, pagos, inventario (lectura), reportes |
+| cliente | Tienda web (pedidos) |
+
+## Producción
+
+Ver [DEPLOY.md](DEPLOY.md) para Railway/Render.

@@ -35,13 +35,18 @@ class Producto extends Model
         ];
     }
 
+    public function movimientos()
+    {
+        return $this->hasMany(MovimientoInventario::class, 'producto_id');
+    }
+
     public function lotes()
     {
         return $this->hasMany(LoteProducto::class, 'producto_id');
     }
 
-    public function movimientos()
+    public function stockDisponible(): float
     {
-        return $this->hasMany(MovimientoInventario::class, 'producto_id');
+        return (float) $this->lotes()->sum('cantidad_disponible');
     }
 }

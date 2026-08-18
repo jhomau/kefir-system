@@ -102,6 +102,10 @@ class ProductoResource extends Resource
                     ->label('Precio venta')
                     ->money('BOB')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('stock_disponible')
+                    ->label('Stock')
+                    ->getStateUsing(fn (Producto $record): string => number_format($record->stockDisponible(), 2))
+                    ->color(fn (Producto $record): ?string => $record->stockDisponible() <= (float) $record->stock_minimo ? 'danger' : null),
                 Tables\Columns\TextColumn::make('stock_minimo')
                     ->label('Stock mín.')
                     ->numeric(decimalPlaces: 0)
