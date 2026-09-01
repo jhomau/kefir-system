@@ -37,7 +37,7 @@ fi
 
 export APP_ENV="${APP_ENV:-production}"
 export DB_CONNECTION="pgsql"
-export DB_SSLMODE="require"
+export DB_SSLMODE="${DB_SSLMODE:-require}"
 export SESSION_DRIVER="file"
 export CACHE_STORE="file"
 export QUEUE_CONNECTION="sync"
