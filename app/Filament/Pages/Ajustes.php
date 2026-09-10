@@ -9,10 +9,12 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 
 class Ajustes extends Page implements HasForms
 {
+    use InteractsWithFormActions;
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
@@ -114,7 +116,7 @@ class Ajustes extends Page implements HasForms
             ->send();
     }
 
-    protected function getFormActions(): array
+    public function getFormActions(): array
     {
         return [
             Action::make('guardar')
