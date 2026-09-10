@@ -46,6 +46,7 @@ class RolesPermisosSeeder extends Seeder
             ['name' => 'reservas.crear', 'nombre_visible' => 'Crear reservas', 'modulo' => 'reservas'],
             ['name' => 'tienda.ver_catalogo', 'nombre_visible' => 'Ver catálogo web', 'modulo' => 'tienda'],
             ['name' => 'tienda.realizar_pedido', 'nombre_visible' => 'Realizar pedido', 'modulo' => 'tienda'],
+            ['name' => 'configuracion.editar', 'nombre_visible' => 'Editar ajustes', 'modulo' => 'configuracion'],
         ];
 
         foreach ($permisos as $permiso) {

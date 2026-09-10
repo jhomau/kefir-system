@@ -1,6 +1,6 @@
 @extends('tienda.layout')
 
-@section('title', 'Checkout — Kefir')
+@section('title', 'Checkout — '.$ajustes->nombre_negocio)
 
 @section('content')
     <h1>Confirmar pedido</h1>
