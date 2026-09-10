@@ -1,10 +1,10 @@
 @extends('tienda.layout')
 
-@section('title', 'Catálogo — Kefir')
+@section('title', 'Catálogo — '.$ajustes->nombre_negocio)
 
 @section('content')
-    <h1>Catálogo de kefir</h1>
-    <p style="color:#6b7280;margin-bottom:1rem">Productos disponibles para pedido web.</p>
+    <h1>Catálogo</h1>
+    <p style="color:#6b7280;margin-bottom:1rem">{{ $ajustes->mensaje_tienda ?: 'Productos disponibles para pedido web.' }}</p>
 
     @forelse($productos as $producto)
         <div class="card">

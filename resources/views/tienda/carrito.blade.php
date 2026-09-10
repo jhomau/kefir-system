@@ -1,6 +1,6 @@
 @extends('tienda.layout')
 
-@section('title', 'Carrito — Kefir')
+@section('title', 'Carrito — '.$ajustes->nombre_negocio)
 
 @section('content')
     <h1>Tu carrito</h1>

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Configuracion;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -17,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureDatabaseFromEnvironment(): void
     {
+        if ($this->app->environment('testing')) {
+            return;
+        }
+
         $url = env('DATABASE_URL') ?: env('DB_URL');
 
         if ($url) {
@@ -49,6 +55,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::composer('tienda.*', function ($view) {
+            $view->with(
+                'ajustes',
+                Configuracion::disponible() ? Configuracion::actual() : Configuracion::fallback()
+            );
+        });
+
         if (! $this->app->environment('production')) {
             return;
         }
